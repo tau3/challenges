@@ -14,13 +14,6 @@ data Cell a
 
 type Grid = [(Point, Cell Int)]
 
-readMultipleLinesAsStringArray :: Int -> IO [String]
-readMultipleLinesAsStringArray 0 = return []
-readMultipleLinesAsStringArray n = do
-  line <- getLine
-  rest <- readMultipleLinesAsStringArray (n - 1)
-  return (line : rest)
-
 makeCell :: Int -> Int -> [String] -> (Point, Cell Int)
 makeCell row column rawData = ((row, column), state)
   where
@@ -54,20 +47,21 @@ setMultiple :: Grid -> [Point] -> Cell Int -> Grid
 setMultiple g [] _ = g
 setMultiple g (p:ps) v = setMultiple (set g p v) ps v
 
-destroyed :: Int -> Int -> [Point]
-destroyed r c = (r, c) : neighbours (r, c)
+destroyed :: Grid -> Point -> [Point]
+destroyed grid (r, c) = (r, c) : neighbours (r, c)
   where
     neighbours p' = filter fits [upper p', lower p', left p', right p']
     upper (r', c') = (r' - 1, c')
     lower (r', c') = (r' + 1, c')
     left (r', c') = (r', c' - 1)
     right (r', c') = (r', c' + 1)
-    fits (r', c') = r' >= 0 && c' >= 0
+    fits (r', c') =
+      r' >= 0 && c' >= 0 && r' < countRows grid && c' < countCols grid
 
 maybeExplodeBomb :: Grid -> Point -> Grid
 maybeExplodeBomb grid (r, c) =
   if lookup (r, c) grid == Just (Bomb 0)
-    then setMultiple grid (destroyed r c) Empty
+    then setMultiple grid (destroyed grid (r, c)) Empty
     else grid
 
 maybeExplodeBombs :: Grid -> [Point] -> Grid
@@ -91,17 +85,17 @@ countRows :: Grid -> Int
 countRows g = 1 + maximum (map (\(p, _) -> fst p) g)
 
 countCols :: Grid -> Int
-countCols g = 1 + maximum (map (\(p, _) -> fst p) g)
+countCols g = 1 + maximum (map (\(p, _) -> snd p) g)
 
-simulate :: Grid -> Int -> Grid
-simulate g sec
+simulate :: (Grid, Int) -> Grid
+simulate (g, sec)
   | sec < 1 = error "second should be >= 1"
-  | sec == 1 = g
-  | odd sec = explode $ tick g
-  | otherwise = plantBombs $ explode $ tick g
+  | sec == 1 = tick g
+  | odd sec = explode $ tick $ simulate (g, sec - 1)
+  | otherwise = plantBombs $ explode $ tick $ simulate (g, sec - 1)
 
-getValue :: Grid -> Int -> Int -> Char
-getValue grid r c
+getValue :: Grid -> Point -> Char
+getValue grid (r, c)
   | val == Just Empty = '.'
   | isNothing val =
     error $
@@ -110,16 +104,24 @@ getValue grid r c
   where
     val = lookup (r, c) grid
 
-printGrid :: Grid -> Int -> Int -> IO ()
-printGrid grid r c =
-  for_ [0 .. r - 1] $ \ri -> do
-    for_ [0 .. c - 1] $ \ci -> print $ getValue grid ri ci
-    print '\n'
+printGrid :: Grid -> String
+printGrid grid =
+  runST $ do
+    res <- newSTRef ""
+    let r = countRows grid - 1
+    let c = countCols grid - 1
+    for_ [0 .. r] $ \ri -> do
+      for_ [0 .. c] $ \ci ->
+        modifySTRef' res (\v -> v ++ [getValue grid (ri, ci)])
+      modifySTRef' res (\v -> v ++ ['\n'])
+    readSTRef res
+
+gridAndSecondsFromString :: String -> (Grid, Int)
+gridAndSecondsFromString s =
+  let ls = lines s
+      [r, c, n] = map read $ words $ head ls :: [Int]
+      grid = parseGrid (tail ls) r c
+   in (grid, n)
 
 main :: IO ()
-main = do
-  [r, c, n] <- map read . words <$> getLine :: IO [Int]
-  rawGrid <- readMultipleLinesAsStringArray r
-  let grid = parseGrid rawGrid r c
-  let res = simulate grid n
-  printGrid res r c
+main = interact $ printGrid . simulate . gridAndSecondsFromString
