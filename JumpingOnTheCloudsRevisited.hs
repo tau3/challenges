@@ -4,6 +4,7 @@ solve _ False 0 _ e _ = e
 solve c _ i k e n = solve c False i' k e' n
   where
     e' =
+      -1 +
       if c !! i == 0
         then e
         else e - 2
