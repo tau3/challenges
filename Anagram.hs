@@ -1,34 +1,30 @@
 import Data.Foldable
 
+import Control.Monad
 import Data.IORef
 import Data.List
 
-ifM :: Monad m => m Bool -> m a -> m a -> m a
-ifM b t f = do
-  b' <- b
-  if b'
-    then t
-    else f
-
 whenM :: Monad m => m Bool -> m () -> m ()
-whenM b t = ifM b t (return ())
+whenM b t = do
+  b' <- b
+  when b' t
 
-elemIO :: Char -> IORef String -> IO Bool
+elemIO :: Eq a => a -> IORef [a] -> IO Bool
 elemIO c str = do
   r <- readIORef str
   return $ c `elem` r
 
 solve :: String -> IO Int
-solve s = do
-  let l = length s
+solve str = do
+  let l = length str
   if even l
     then (do let half = (1 + l) `div` 2
-             a <- newIORef (take half s)
-             let b = drop half s
-             for_ [0 .. length b - 1] $ \i -> do
-               let c = b !! i
-               whenM (c `elemIO` a) $ modifyIORef' a (delete c)
-             length <$> readIORef a)
+             left <- newIORef (take half str)
+             let right = drop half str
+             for_ [0 .. length right - 1] $ \i -> do
+               let c = right !! i
+               whenM (c `elemIO` left) $ modifyIORef' left (delete c)
+             length <$> readIORef left)
     else return (-1)
 
 main :: IO ()
