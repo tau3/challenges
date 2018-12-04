@@ -1,16 +1,16 @@
+import qualified Data.HashMap.Strict as Map
 import Data.List
-import qualified Data.Map.Strict as Map
 import Data.Maybe
 
-countChars :: String -> Map.Map Char Int
+countChars :: String -> Map.HashMap Char Int
 countChars = foldl' (flip (Map.alter f)) Map.empty
   where
     f maybeVal
-      | isNothing maybeVal = Just 0
+      | isNothing maybeVal = Just 1
       | otherwise = fmap (+ 1) maybeVal
 
-isBalanced :: Map.Map Char Int -> Int -> Bool
-isBalanced m n = Map.foldl (\acc v -> acc && (v <= n)) True m
+isBalanced :: Map.HashMap Char Int -> Int -> Bool
+isBalanced m n = Map.foldl' (\acc v -> acc && (v <= n)) True m
 
 solve :: String -> Int
 solve s = solve' (countChars s) 0 0 l
@@ -30,4 +30,4 @@ solve s = solve' (countChars s) 0 0 l
          in solve' m' i' j res'
 
 main :: IO ()
-main = (solve <$> getLine >> getLine) >>= print
+main = getLine >> getLine >>= return . solve >>= print
