@@ -1,19 +1,14 @@
 import qualified Data.Set as Set
 
 minimumLoss :: [Int] -> Int
-minimumLoss xs = go (Set.singleton (head xs)) 1 maxBound
+minimumLoss (y:ys) = go (Set.singleton y) ys maxBound
   where
-    l = length xs
-    go prevs i res
-      | i == l = res
-      | otherwise = min res' (go (Set.insert current prevs) (i + 1) res')
+    go _ [] res = res
+    go prevs (r:rs) res = min res' (go (Set.insert r prevs) rs res')
       where
-        current = xs !! i
-        sell = Set.lookupGT current prevs
-        res' =
-          case sell of
-            Nothing -> res
-            Just p -> min res (p - current)
+        maybePrice = Set.lookupGT r prevs
+        res' = maybe res (\p -> min res (p - r)) maybePrice
+minimumLoss _ = error "incorrect case"
 
 main :: IO ()
 main = (minimumLoss . map read . words <$> (getLine >> getLine)) >>= print
