@@ -8,7 +8,9 @@ class Solution:
     def deleteDuplicates(self, head):
         current = head
         while current and current.next:
-            if current.val == current.next.val:
-                current.next = current.next.next
+            next_ = current.next
+            while next_ and (next_.val == current.val):
+                next_ = next_.next
+            current.next = next_
             current = current.next
         return head

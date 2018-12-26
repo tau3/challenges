@@ -6,6 +6,7 @@ from leetcode.remove_duplicates_from_sorted_linked_list import Solution, ListNod
 class RemoveDuplicatesFromSortedLinkedListTest(TestCase):
     def test_remove(self):
         self.assertEqual([1, 2, 3], self._get_actual([1, 1, 2, 3, 3]))
+        self.assertEqual([1, 2, 3], self._get_actual([1, 1, 1, 2, 2, 2, 3, 3, 3]))
         self.assertEqual([1, 2], self._get_actual([1, 1, 2]))
         self.assertEqual([1], self._get_actual([1]))
         self.assertEqual([1], self._get_actual([1, 1]))
