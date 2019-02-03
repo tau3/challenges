@@ -6,17 +6,19 @@ solve arr =
     then "BOB"
     else "ANDY"
 
-countTurns arr = length $ takeWhile (not . null) $ iterate turn arr
-
-turn :: [Int] -> [Int]
-turn arr = takeWhile (/= m) arr
+countTurns :: [Int] -> Int
+countTurns arr = go arr 0 0
   where
-    m = maximum arr
+    go (x:xs) localMax res =
+      if x > localMax
+        then go xs x (res + 1)
+        else go xs localMax res
+    go [] _ res = res
 
 main :: IO ()
 main = do
   g <- read <$> getLine :: IO Int
   forM_ [1 .. g] $ \_ -> do
-    n <- read <$> getLine :: IO Int
+    _ <- getLine
     arr <- map read . words <$> getLine :: IO [Int]
     putStrLn $ solve arr
