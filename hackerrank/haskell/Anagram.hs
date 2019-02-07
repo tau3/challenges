@@ -1,36 +1,20 @@
-import Data.Foldable
+import Control.Monad (replicateM_)
+import Data.List (delete, splitAt)
 
-import Control.Monad
-import Data.IORef
-import Data.List
+splitInHalf :: [a] -> ([a], [a])
+splitInHalf xs = splitAt ((length xs + 1) `div` 2) xs
 
-whenM :: Monad m => m Bool -> m () -> m ()
-whenM b t = do
-  b' <- b
-  when b' t
+countChanges :: Eq a => [a] -> [a] -> Int
+countChanges xs (y:ys) = solve (delete y xs) ys
+countChanges xs [] = length xs
 
-elemIO :: Eq a => a -> IORef [a] -> IO Bool
-elemIO c str = do
-  r <- readIORef str
-  return $ c `elem` r
-
-solve :: String -> IO Int
-solve str = do
-  let l = length str
-  if even l
-    then (do let half = (1 + l) `div` 2
-             left <- newIORef (take half str)
-             let right = drop half str
-             for_ [0 .. length right - 1] $ \i -> do
-               let c = right !! i
-               whenM (c `elemIO` left) $ modifyIORef' left (delete c)
-             length <$> readIORef left)
-    else return (-1)
+megaSolve :: Eq a => [a] -> Int
+megaSolve xs =
+  if even (length xs)
+    then uncurry countChanges (splitInHalf xs)
+    else -1
 
 main :: IO ()
 main = do
-  q <- read <$> getLine :: IO Int
-  for_ [1 .. q] $ \_ -> do
-    s <- getLine
-    res <- solve s
-    print res
+  q <- read <$> getLine
+  replicateM_ q (megaSolve <$> getLine >>= print)
