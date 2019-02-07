@@ -1,35 +1,39 @@
 import Control.Monad
-import Data.Foldable (for_)
-import Data.IORef
+import Control.Monad.State
+import Data.List (foldl')
 import qualified Data.Vector as V
 import qualified Data.Vector.Mutable as MV
-import Prelude hiding ((/))
 
-maybeModifyIORef :: IORef Int -> Bool -> (Int -> Int) -> IO ()
-maybeModifyIORef ref p f
-  | p = void (modifyIORef ref f)
-  | otherwise = return ()
+makeRems :: [Int] -> Int -> V.Vector Int
+makeRems s k =
+  foldl'
+    (\acc i ->
+       let pos = (s !! i) `mod` k
+        in increaseByOne acc pos)
+    (V.replicate k 0)
+    [0 .. length s - 1]
+  where
+    increaseByOne v pos = V.modify (\mw -> MV.modify mw (+ 1) pos) v
 
-(%) :: Int -> Int -> Int
-(%) = mod
-
-(/) :: Int -> Int -> Int
-(/) = div
-
-(+=) :: IORef Int -> Int -> IO ()
-(+=) ref i = void (modifyIORef ref (+ i))
+findAnswer :: V.Vector Int -> Int -> Int
+findAnswer rems k = go 0 0
+  where
+    lim = ((k - 1) `div` 2) - 1
+    go ans i
+      | i > lim = ans
+      | otherwise = go (ans + reminder) (i + 1)
+      where
+        reminder = max (rems V.! (i + 1)) (rems V.! (k - 1 - i))
 
 main :: IO ()
 main = do
   [_, k] <- map read . words <$> getLine :: IO [Int]
   s <- map read . words <$> getLine :: IO [Int]
-  remsIO <- MV.replicate k 0
-  for_ [0 .. length s - 1] $ \i -> MV.unsafeModify remsIO (+ 1) ((s !! i) % k)
-  rems <- V.unsafeFreeze remsIO
-  ansIO <- newIORef (0 :: Int)
-  for_ [0 .. ((k - 1) / 2) - 1] $ \i ->
-    ansIO += max (rems V.! (i + 1)) (rems V.! (k - 1 - i))
-  maybeModifyIORef ansIO (rems V.! 0 > 0) (+ 1)
-  maybeModifyIORef ansIO (even k && (rems V.! (k / 2) > 0)) (+ 1)
-  ans <- readIORef ansIO
+  let rems = makeRems s k
+  ans <-
+    snd <$>
+    runStateT
+      (do when (rems V.! 0 > 0) (modify (+ 1))
+          when (even k && (rems V.! (k `div` 2) > 0)) (modify (+ 1)))
+      (findAnswer rems k)
   print ans
