@@ -5,16 +5,15 @@ splitInHalf :: [a] -> ([a], [a])
 splitInHalf xs = splitAt ((length xs + 1) `div` 2) xs
 
 countChanges :: Eq a => [a] -> [a] -> Int
-countChanges xs (y:ys) = solve (delete y xs) ys
+countChanges xs (y:ys) = countChanges (delete y xs) ys
 countChanges xs [] = length xs
 
-megaSolve :: Eq a => [a] -> Int
-megaSolve xs =
-  if even (length xs)
-    then uncurry countChanges (splitInHalf xs)
-    else -1
+solve :: Eq a => [a] -> Int
+solve xs
+  | even (length xs) = uncurry countChanges (splitInHalf xs)
+  | otherwise = -1
 
 main :: IO ()
 main = do
   q <- read <$> getLine
-  replicateM_ q (megaSolve <$> getLine >>= print)
+  replicateM_ q (solve <$> getLine >>= print)
