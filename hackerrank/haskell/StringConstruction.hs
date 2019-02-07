@@ -1,7 +1,7 @@
-import Control.Monad (replicateM_)
+import Control.Monad (mapM_, replicateM)
 import Data.List (nub)
 
 main :: IO ()
-main = do
-  n <- read <$> getLine :: IO Int
-  replicateM_ n $ (length . nub <$> getLine) >>= print
+main =
+  map (length . nub) <$> (read <$> getLine >>= (`replicateM` getLine)) >>=
+  mapM_ print
