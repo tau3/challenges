@@ -1,20 +1,15 @@
 import Control.Monad (replicateM)
 import qualified Data.HashMap.Strict as M (HashMap, alter, empty, lookupDefault)
-import Data.List (foldl')
 import qualified Data.Set as S (Set, empty, insert, notMember)
 
 type AdjacencyMatrix = M.HashMap Int [Int]
 
 dfs :: Int -> AdjacencyMatrix -> S.Set Int -> S.Set Int
-dfs vertice adjacencyMatrix visited =
-  foldl'
-    (\currentVisited adjacentVertice ->
-       dfs adjacentVertice adjacencyMatrix currentVisited)
-    visited'
-    toVisit
+dfs vertice matrix visited =
+  foldr (\adjacent partial -> dfs adjacent matrix partial) visited' toVisit
   where
     visited' = S.insert vertice visited
-    adjacents = M.lookupDefault [] vertice adjacencyMatrix
+    adjacents = M.lookupDefault [] vertice matrix
     toVisit = filter (`S.notMember` visited') adjacents
 
 splitTrees :: [Int] -> AdjacencyMatrix -> [Int]
@@ -24,7 +19,7 @@ splitTrees vertices adjacencyMatrix = go [] vertices S.empty
       | v `S.notMember` visited =
         let visited' = dfs v adjacencyMatrix visited
             res' = (length visited' - length visited) : res
-         in go res' vs (dfs v adjacencyMatrix visited)
+         in go res' vs visited'
       | otherwise = go res vs visited
     go res [] _ = res
 
@@ -51,7 +46,8 @@ main :: IO ()
 main = do
   [n, p] <- readInts
   edges <- replicateM p readInts
-  let trees = splitTrees [0 .. n - 1] (makeAdjacencyMatrix edges)
+  let vertices = [0 .. n - 1]
+  let trees = splitTrees vertices (makeAdjacencyMatrix edges)
   print $ countPermutations trees
   where
     readInts = map read . words <$> getLine
