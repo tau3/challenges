@@ -1,11 +1,11 @@
-{-# LANGUAGE LambdaCase #-}
+import Control.Monad (replicateM)
+import qualified Data.HashMap.Strict as M (HashMap, alter, empty, lookupDefault)
+import Data.List (foldl')
+import qualified Data.Set as S (Set, empty, insert, notMember)
 
-import Control.Monad
-import Data.List
-import qualified Data.Map as Map
-import qualified Data.Set as Set
+type AdjacencyMatrix = M.HashMap Int [Int]
 
-dfs :: Int -> Map.Map Int [Int] -> Set.Set Int -> Set.Set Int
+dfs :: Int -> AdjacencyMatrix -> S.Set Int -> S.Set Int
 dfs vertice adjacencyMatrix visited =
   foldl'
     (\currentVisited adjacentVertice ->
@@ -13,45 +13,45 @@ dfs vertice adjacencyMatrix visited =
     visited'
     toVisit
   where
-    visited' = Set.insert vertice visited
-    adjacents = Map.findWithDefault [] vertice adjacencyMatrix
-    toVisit = filter (`Set.notMember` visited') adjacents
+    visited' = S.insert vertice visited
+    adjacents = M.lookupDefault [] vertice adjacencyMatrix
+    toVisit = filter (`S.notMember` visited') adjacents
 
-splitTrees :: [Int] -> Map.Map Int [Int] -> [Int]
-splitTrees vertices adjacencyMatrix = go [] vertices Set.empty
+splitTrees :: [Int] -> AdjacencyMatrix -> [Int]
+splitTrees vertices adjacencyMatrix = go [] vertices S.empty
   where
     go res (v:vs) visited
-      | v `Set.notMember` visited =
+      | v `S.notMember` visited =
         let visited' = dfs v adjacencyMatrix visited
-         in go
-              ((length visited' - length visited) : res)
-              vs
-              (dfs v adjacencyMatrix visited)
+            res' = (length visited' - length visited) : res
+         in go res' vs (dfs v adjacencyMatrix visited)
       | otherwise = go res vs visited
     go res [] _ = res
 
-perms :: [Int] -> Int
-perms xs =
-  sum $ map (uncurry (*)) [(snd i, snd j) | i <- xs', j <- xs', fst i < fst j]
+countPermutations :: [Int] -> Int
+countPermutations sizes = go sizes 0 0
   where
-    xs' = zip ([0 ..] :: [Int]) xs
+    go (x:xs) s res = go xs s' res'
+      where
+        res' = res + s * x
+        s' = s + x
+    go [] _ result = result
 
-makeAdjacencyMatrix :: [[Int]] -> Map.Map Int [Int]
-makeAdjacencyMatrix = foldl' (\m [u, v] -> insertEdge m u v) Map.empty
+makeAdjacencyMatrix :: [[Int]] -> AdjacencyMatrix
+makeAdjacencyMatrix = foldl' insertEdge M.empty
   where
-    insertEdge m u v = insert' (insert' m v u) u v
-    insert' :: Map.Map Int [Int] -> Int -> Int -> Map.Map Int [Int]
-    insert' m' k' v' =
-      Map.alter
-        (\case
-           Just vs -> Just (v' : vs)
-           Nothing -> Just [v'])
-        k'
-        m'
+    insertEdge m [u, v] = insert (insert m v u) u v
+    insertEdge _ _ = error "incorrect input"
+    insert m k v = M.alter f k m
+      where
+        f (Just vs) = Just (v : vs)
+        f Nothing = Just [v]
 
 main :: IO ()
 main = do
-  [n, p] <- map read . words <$> getLine :: IO [Int]
-  edges <- (map (map read . words) <$> replicateM p getLine) :: IO [[Int]]
+  [n, p] <- readInts
+  edges <- replicateM p readInts
   let trees = splitTrees [0 .. n - 1] (makeAdjacencyMatrix edges)
-  print $ perms trees
+  print $ countPermutations trees
+  where
+    readInts = map read . words <$> getLine
