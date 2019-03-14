@@ -1,39 +1,29 @@
-import Control.Monad
-import Control.Monad.ST
-import Data.Array
-import Data.Array.ST
-import Data.Foldable
+import Control.Monad (replicateM_)
+import Data.Foldable (foldl')
 
-solve :: Array Int Int -> Int -> (Int, Int)
-solve arr n =
-  runST $ do
-    dp <-
-      newArray ((0, 0), (n - 1, n - 1)) (0, 0) :: ST s (STArray s (Int, Int) ( Int
-                                                                             , Int))
-    for_ [0 .. n - 1] $ \i ->
-      for_ [i .. n - 1] $ \j -> do
-        maxSubArray <-
-          if i == j
-            then return (arr ! j)
-            else do
-              maxPrevSub <- fst <$> readArray dp (i, j - 1)
-              return $ (arr ! j) + maxPrevSub
-        maxSubSeq <-
-          if i == j
-            then return (arr ! j)
-            else do
-              prevMaxSubSeq <- snd <$> readArray dp (i, j - 1)
-              return $ max prevMaxSubSeq ((arr ! j) + prevMaxSubSeq)
-        writeArray dp (i, j) (maxSubArray, maxSubSeq)
-    maxSubArray <- maximum . map fst <$> getElems dp
-    maxSubSeq <- snd <$> readArray dp (0, n - 1)
-    return (maxSubArray, maxSubSeq)
+lowest :: Int
+lowest = -(10 ^ 4) - 1
+
+subArray :: [Int] -> Int
+subArray xs = fst $ foldl' f (lowest, 0) xs
+  where
+    f (res, current) x = (res', current'')
+      where
+        current' = current + x
+        res' = max res current'
+        current'' = max 0 current'
+
+subSequence :: [Int] -> Int
+subSequence xs
+  | null xs' = maximum xs
+  | otherwise = sum xs'
+  where
+    xs' = filter (> 0) xs
 
 main :: IO ()
 main = do
   t <- read <$> getLine
   replicateM_ t $ do
-    n <- read <$> getLine
-    arr <- listArray (0, n - 1) . map read . words <$> getLine
-    let res = solve arr n
-    putStrLn $ show (fst res) ++ " " ++ show (snd res)
+    _ <- getLine
+    arr <- map read . words <$> getLine
+    putStrLn $ show (subArray arr) ++ " " ++ show (subSequence arr)
