@@ -3,10 +3,10 @@ class WordDictionary:
         self.__root = _Node('.')
 
     def addWord(self, word: str) -> None:
-        self.__root.add_word(word)
+        self.__root.add_word(word + '*')
 
     def search(self, word: str) -> bool:
-        return self.__root.contains(word)
+        return self.__root.contains(word + '*')
 
 
 class _Node:
