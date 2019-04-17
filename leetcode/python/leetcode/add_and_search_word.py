@@ -1,6 +1,6 @@
 class WordDictionary:
     def __init__(self):
-        self.__root = _Node('.')
+        self.__root = _Node()
 
     def addWord(self, word: str) -> None:
         self.__root.add_word(word + '*')
@@ -10,35 +10,30 @@ class WordDictionary:
 
 
 class _Node:
-    def __init__(self, val):
-        self.__val = val
+    def __init__(self):
         self.__children = {}
 
     def add_word(self, word):
-        if not word:
-            return
-
-        letter = word[0]
-        rest = word[1:]
-
-        child = self.__put_in_absent(letter)
-        child.add_word(rest)
-        child = self.__put_in_absent('.')
-        child.add_word(rest)
-
-    def __put_in_absent(self, letter):
-        if letter not in self.__children:
-            self.__children[letter] = _Node(letter)
-        return self.__children[letter]
+        current = self.__children
+        for letter in word:
+            if letter not in current:
+                current[letter] = {}
+            current = current[letter]
 
     def contains(self, word):
-        if not word:
-            return True
+        return self.__dfs(word, self.__children)
+
+    def __dfs(self, word, node):
         letter = word[0]
         rest = word[1:]
 
-        result = False
-        if letter in self.__children:
-            subtree = self.__children[letter]
-            result = subtree.contains(rest)
-        return result
+        if letter == '.':
+            for child in node.values():
+                if self.__dfs(rest, child):
+                    return True
+            return False
+        if letter == '*':
+            return '*' in node
+        if letter not in node:
+            return False
+        return self.__dfs(rest, node[letter])
