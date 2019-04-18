@@ -1,15 +1,18 @@
+_END = '*'
+
+
 class WordDictionary:
     def __init__(self):
-        self.__root = _Node()
+        self.__root = _Trie()
 
     def addWord(self, word: str) -> None:
-        self.__root.add_word(word + '*')
+        self.__root.add_word(word + _END)
 
     def search(self, word: str) -> bool:
-        return self.__root.contains(word + '*')
+        return self.__root.contains(word + _END)
 
 
-class _Node:
+class _Trie:
     def __init__(self):
         self.__children = {}
 
@@ -32,8 +35,8 @@ class _Node:
                 if self.__dfs(rest, child):
                     return True
             return False
-        if letter == '*':
-            return '*' in node
+        if letter == _END:
+            return _END in node
         if letter not in node:
             return False
         return self.__dfs(rest, node[letter])
