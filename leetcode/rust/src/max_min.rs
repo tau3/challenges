@@ -1,7 +1,7 @@
 use std::convert::TryFrom;
 use std::io;
 
-fn main() {
+fn main_max_min() {
     let n = read_u32();
     let k = usize::try_from(read_u32()).unwrap();
 
