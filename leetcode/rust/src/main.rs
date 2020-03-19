@@ -1,5 +1,3 @@
-mod valid_palindrome_2;
+mod minimum_remove_to_make_valid_parentheses;
 
-fn main() {
-    println!("{}", valid_palindrome_2::Solution::valid_palindrome("abcaa".to_string()));
-}
+fn main() {}
