@@ -15,24 +15,24 @@ public:
         pattern_length = m;
         repeats = k;
 
-        for (int start_slice = 0; start_slice < int(arr.size()) - pattern_length; ++start_slice)
+        for (int start_slice = 0; start_slice < int(arr.size()) - pattern_length * (repeats - 1); start_slice++)
         {
-            int count = 0;
+            int count = 1;
             for (int start_pattern = start_slice + pattern_length;
-                 start_pattern < int(arr.size()) - pattern_length;)
+                 start_pattern <= int(arr.size()) - pattern_length;)
             {
                 if (are_slices_equal(start_slice, start_pattern))
                 {
-                    cout << "equal " << start_slice << " " << start_pattern << endl;
+                    // cout << "equal " << start_slice << " " << start_pattern << endl;
                     ++count;
                     start_pattern += pattern_length;
                 }
                 else
                 {
-                    ++start_pattern;
+                    break;
                 }
             }
-            if (count == repeats - 1)
+            if (count >= repeats)
             {
                 return true;
             }
@@ -76,19 +76,26 @@ TEST(TestSuite, test_case_3)
 {
     Solution solution;
     vector<int> input{1, 2, 1, 2, 1, 3};
-    ASSERT_TRUE(solution.containsPattern(input, 2, 3));
+    ASSERT_FALSE(solution.containsPattern(input, 2, 3));
 }
 
 TEST(TestSuite, test_case_4)
 {
     Solution solution;
     vector<int> input{1, 2, 3, 1, 2};
-    ASSERT_TRUE(solution.containsPattern(input, 2, 2));
+    ASSERT_FALSE(solution.containsPattern(input, 2, 2));
 }
 
 TEST(TestSuite, test_case_5)
 {
     Solution solution;
     vector<int> input{2, 2, 2, 2};
-    ASSERT_TRUE(solution.containsPattern(input, 2, 3));
+    ASSERT_FALSE(solution.containsPattern(input, 2, 3));
+}
+
+TEST(TestSuite, test_case_6)
+{
+    Solution solution;
+    vector<int> input{2, 2};
+    ASSERT_TRUE(solution.containsPattern(input, 1, 2));
 }
