@@ -1,5 +1,6 @@
 #include <vector>
 #include "gtest/gtest.h"
+#include <iostream>
 
 using namespace std;
 
@@ -18,16 +19,20 @@ public:
         {
             int count = 0;
             for (int start_pattern = start_slice + pattern_length;
-                 start_pattern < int(arr.size()) - pattern_length;
-                 start_pattern++)
+                 start_pattern < int(arr.size()) - pattern_length;)
             {
                 if (are_slices_equal(start_slice, start_pattern))
                 {
+                    cout << "equal " << start_slice << " " << start_pattern << endl;
                     ++count;
                     start_pattern += pattern_length;
                 }
+                else
+                {
+                    ++start_pattern;
+                }
             }
-            if (count == repeats)
+            if (count == repeats - 1)
             {
                 return true;
             }
@@ -53,14 +58,37 @@ private:
     }
 };
 
-TEST(TestSuite, test_solution)
+TEST(TestSuite, test_case_1)
 {
     Solution solution;
     vector<int> input{1, 2, 4, 4, 4, 4};
     ASSERT_TRUE(solution.containsPattern(input, 1, 3));
 }
 
-TEST(TestSuite, broken)
+TEST(TestSuite, test_case_2)
 {
-    ASSERT_TRUE(false);
+    Solution solution;
+    vector<int> input{1, 2, 1, 2, 1, 1, 1, 3};
+    ASSERT_TRUE(solution.containsPattern(input, 2, 2));
+}
+
+TEST(TestSuite, test_case_3)
+{
+    Solution solution;
+    vector<int> input{1, 2, 1, 2, 1, 3};
+    ASSERT_TRUE(solution.containsPattern(input, 2, 3));
+}
+
+TEST(TestSuite, test_case_4)
+{
+    Solution solution;
+    vector<int> input{1, 2, 3, 1, 2};
+    ASSERT_TRUE(solution.containsPattern(input, 2, 2));
+}
+
+TEST(TestSuite, test_case_5)
+{
+    Solution solution;
+    vector<int> input{2, 2, 2, 2};
+    ASSERT_TRUE(solution.containsPattern(input, 2, 3));
 }
