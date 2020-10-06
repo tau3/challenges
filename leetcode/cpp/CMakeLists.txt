@@ -10,7 +10,7 @@ add_subdirectory(googletest)
 
 project(${name})
 
-add_executable(${name} detect-pattern-of-length-m-repeated-k-or-more-times.cpp)
+add_executable(${name} next-greater-element-i.cpp)
 target_link_libraries(${name} PUBLIC
     gtest_main
 )
