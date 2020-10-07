@@ -14,7 +14,7 @@ public:
 
     int q(int t)
     {
-        vector<int> count(0, persons.size());
+        vector<int> count(persons.size(), 0);
         for (int i = 0; i < static_cast<int>(persons.size()); i++)
         {
             if (times[i] > t)
@@ -51,7 +51,8 @@ public:
                 last = persons[i];
             }
         }
-        return persons[0];
+
+        return last;
     }
 
 private:
@@ -66,4 +67,27 @@ TEST(online_election, test_case_1)
     TopVotedCandidate top_voted_cadidate{persons, times};
 
     ASSERT_EQ(0, top_voted_cadidate.q(3));
+    ASSERT_EQ(1, top_voted_cadidate.q(12));
+    ASSERT_EQ(1, top_voted_cadidate.q(25));
+    ASSERT_EQ(0, top_voted_cadidate.q(15));
+    ASSERT_EQ(0, top_voted_cadidate.q(24));
+    ASSERT_EQ(1, top_voted_cadidate.q(8));
+}
+
+TEST(online_election, test_case_2)
+{
+    vector<int> persons{0, 0, 1, 1, 2};
+    vector<int> times{0, 67, 69, 74, 87};
+    TopVotedCandidate top_voted_cadidate{persons, times};
+
+    ASSERT_EQ(0, top_voted_cadidate.q(4));
+    ASSERT_EQ(0, top_voted_cadidate.q(62));
+    ASSERT_EQ(1, top_voted_cadidate.q(100));
+    ASSERT_EQ(1, top_voted_cadidate.q(88));
+    ASSERT_EQ(0, top_voted_cadidate.q(70));
+    ASSERT_EQ(0, top_voted_cadidate.q(73));
+    ASSERT_EQ(0, top_voted_cadidate.q(22));
+    ASSERT_EQ(1, top_voted_cadidate.q(75));
+    ASSERT_EQ(0, top_voted_cadidate.q(29));
+    ASSERT_EQ(0, top_voted_cadidate.q(10));
 }
