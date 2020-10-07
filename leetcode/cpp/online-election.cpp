@@ -8,59 +8,32 @@ class TopVotedCandidate
 public:
     TopVotedCandidate(vector<int> &persons, vector<int> &times)
     {
-        this->persons = persons;
-        this->times = times;
+        map<int, int> person_to_votes;
+        int most_votes = 0;
+        int elected = -1;
+        for (size_t i = 0; i < persons.size(); ++i)
+        {
+            person_to_votes[persons[i]]++;
+            int votes = person_to_votes[persons[i]];
+            if (votes >= most_votes)
+            {
+                most_votes = votes;
+                elected = persons[i];
+            }
+            time_to_solution[times[i]] = elected;
+        }
     }
 
     int q(int t)
     {
-        vector<int> count(persons.size(), 0);
-        for (int i = 0; i < static_cast<int>(persons.size()); i++)
-        {
-            if (times[i] > t)
-            {
-                break;
-            }
-            count[persons[i]]++;
-        }
-
-        int biggest = *max_element(count.begin(), count.end());
-
-        vector<int> candidates;
-        for (int i = 0; i < static_cast<int>(count.size()); i++)
-        {
-            if (count[i] == biggest)
-            {
-                candidates.push_back(i);
-            }
-        }
-        if (candidates.size() == 1)
-        {
-            return candidates[0];
-        }
-
-        int last = -1;
-        for (int i = 0; i < static_cast<int>(persons.size()); i++)
-        {
-            if (times[i] > t)
-            {
-                break;
-            }
-            if (find(candidates.begin(), candidates.end(), persons[i]) != candidates.end())
-            {
-                last = persons[i];
-            }
-        }
-
-        return last;
+        return (*prev((time_to_solution.upper_bound(t)))).second;
     }
 
 private:
-    vector<int> persons;
-    vector<int> times;
+    map<int, int> time_to_solution;
 };
 
-TEST(online_election, test_case_1)
+TEST(online_election_1, test_case_1)
 {
     vector<int> persons{0, 1, 1, 0, 0, 1, 0};
     vector<int> times{0, 5, 10, 15, 20, 25, 30};
@@ -74,7 +47,7 @@ TEST(online_election, test_case_1)
     ASSERT_EQ(1, top_voted_cadidate.q(8));
 }
 
-TEST(online_election, test_case_2)
+TEST(online_election_2, test_case_2)
 {
     vector<int> persons{0, 0, 1, 1, 2};
     vector<int> times{0, 67, 69, 74, 87};
