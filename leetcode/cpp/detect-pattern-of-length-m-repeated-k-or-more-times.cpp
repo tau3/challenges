@@ -23,7 +23,6 @@ public:
             {
                 if (are_slices_equal(start_slice, start_pattern))
                 {
-                    // cout << "equal " << start_slice << " " << start_pattern << endl;
                     ++count;
                     start_pattern += pattern_length;
                 }
