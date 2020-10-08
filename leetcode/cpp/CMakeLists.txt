@@ -11,7 +11,7 @@ add_subdirectory(googletest)
 
 project(${name})
 
-add_executable(${name} online-election.cpp)
+add_executable(${name} maximum-swap.cpp)
 target_link_libraries(${name} PUBLIC
     gtest_main
 )
