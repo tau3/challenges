@@ -11,7 +11,7 @@ add_subdirectory(googletest)
 
 project(${name})
 
-add_executable(${name} maximum-swap.cpp)
+add_executable(${name} largest-number-at-least-twice-of-others.cpp)
 target_link_libraries(${name} PUBLIC
     gtest_main
 )
