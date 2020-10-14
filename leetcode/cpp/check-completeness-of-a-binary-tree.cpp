@@ -1,5 +1,7 @@
 #include <vector>
 #include <deque>
+#include <iostream>
+
 using namespace std;
 
 struct TreeNode
@@ -17,8 +19,8 @@ class Solution
 public:
     bool isCompleteTree(TreeNode *root)
     {
-        deque<TreeNode *> dq;
-        dq.push_back(root);
+        bool is_gap = false;
+        deque<TreeNode *> dq{root};
         while (!dq.empty())
         {
             TreeNode *node = dq.front();
@@ -26,35 +28,20 @@ public:
 
             if (node == nullptr)
             {
+                is_gap = true;
                 continue;
             }
-
-            dq.push_back(node->left);
-            dq.push_back(node->right);
-
-            if ((node->right != nullptr) && (node->left == nullptr))
+            else
             {
-                return false;
-            }
-            if ((node->left != nullptr) && (node->right == nullptr))
-            {
-                if (!has_only_nulls(dq))
+                if (is_gap)
                 {
                     return false;
-                };
-            }
-        }
-        return true;
-    }
-
-private:
-    bool has_only_nulls(const deque<TreeNode *> &dq)
-    {
-        for (TreeNode *ptr : dq)
-        {
-            if (ptr != nullptr)
-            {
-                return false;
+                }
+                else
+                {
+                    dq.push_back(node->left);
+                    dq.push_back(node->right);
+                }
             }
         }
         return true;
