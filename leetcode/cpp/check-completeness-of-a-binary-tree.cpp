@@ -17,20 +17,20 @@ class Solution
 public:
     bool isCompleteTree(TreeNode *root)
     {
-        deque<TreeNode *> q;
-        q.push_back(root);
-        while (!q.empty())
+        deque<TreeNode *> dq;
+        dq.push_back(root);
+        while (!dq.empty())
         {
-            TreeNode *node = q.front();
-            q.pop_front();
+            TreeNode *node = dq.front();
+            dq.pop_front();
 
             if (node == nullptr)
             {
                 continue;
             }
 
-            q.push_back(node->left);
-            q.push_back(node->right);
+            dq.push_back(node->left);
+            dq.push_back(node->right);
 
             if ((node->right != nullptr) && (node->left == nullptr))
             {
@@ -38,7 +38,7 @@ public:
             }
             if ((node->left != nullptr) && (node->right == nullptr))
             {
-                if (!has_only_nulls(q))
+                if (!has_only_nulls(dq))
                 {
                     return false;
                 };
@@ -48,9 +48,9 @@ public:
     }
 
 private:
-    bool has_only_nulls(const deque<TreeNode *> &q)
+    bool has_only_nulls(const deque<TreeNode *> &dq)
     {
-        for (TreeNode *ptr : q)
+        for (TreeNode *ptr : dq)
         {
             if (ptr != nullptr)
             {
