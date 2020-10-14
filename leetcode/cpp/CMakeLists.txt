@@ -11,7 +11,7 @@ add_subdirectory(googletest)
 
 project(${name})
 
-add_executable(${name} self-dividing-numbers.cpp)
+add_executable(${name} check-completeness-of-a-binary-tree.cpp)
 target_link_libraries(${name} PUBLIC
     gtest_main
 )
