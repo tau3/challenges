@@ -11,7 +11,7 @@ add_subdirectory(googletest)
 
 project(${name})
 
-add_executable(${name} check-completeness-of-a-binary-tree.cpp)
+add_executable(${name} distribute-candies.cpp)
 target_link_libraries(${name} PUBLIC
     gtest_main
 )

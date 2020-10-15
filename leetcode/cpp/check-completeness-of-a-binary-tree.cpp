@@ -16,6 +16,7 @@ class Solution {
 public:
   bool isCompleteTree(TreeNode *root) {
     bool is_gap = false;
+
     queue<TreeNode *> dq;
     dq.push(root);
     while (!dq.empty()) {
