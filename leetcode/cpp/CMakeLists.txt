@@ -11,7 +11,7 @@ add_subdirectory(googletest)
 
 project(${name})
 
-add_executable(${name} contains-duplicate-ii.cpp)
+add_executable(${name} two-sum.cpp)
 target_link_libraries(${name} PUBLIC
     gtest_main
 )
