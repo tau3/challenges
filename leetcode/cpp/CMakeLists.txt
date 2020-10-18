@@ -11,7 +11,7 @@ add_subdirectory(googletest)
 
 project(${name})
 
-add_executable(${name} two-sum.cpp)
+add_executable(${name} roman-to-integer.cpp)
 target_link_libraries(${name} PUBLIC
     gtest_main
 )
