@@ -8,10 +8,12 @@ class Solution {
   public:
     int romanToInt(string s) {
         int result = 0;
-        for (size_t i = 0; i < s.length(); ++i) {
-            int value = roman_to_value.at(s[i]);
-            if ((i + 1) < s.length()) {
-                int next_value = roman_to_value.at(s[i + 1]);
+        size_t length = s.length();
+        for (size_t i = 0; i < length; ++i) {
+            int value = roman_to_value().at(s[i]);
+            size_t next = i + 1;
+            if (next < length) {
+                int next_value = roman_to_value().at(s[next]);
                 if (next_value > value) {
                     value *= -1;
                 }
@@ -22,9 +24,12 @@ class Solution {
     }
 
   private:
-    const unordered_map<char, int> roman_to_value = {
-        {'I', 1},   {'V', 5},   {'X', 10},  {'L', 50},
-        {'C', 100}, {'D', 500}, {'M', 1000}};
+    const unordered_map<char, int> &roman_to_value() {
+        static unordered_map<char, int> roman_to_value = {
+            {'I', 1},   {'V', 5},   {'X', 10},  {'L', 50},
+            {'C', 100}, {'D', 500}, {'M', 1000}};
+        return roman_to_value;
+    }
 };
 
 TEST(online_election_2, test_case_2) {
