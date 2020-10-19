@@ -32,7 +32,7 @@ class Solution {
     }
 };
 
-TEST(online_election_2, test_case_2) {
+TEST(p13, test_case_1) {
     Solution solution;
     ASSERT_EQ(3, solution.romanToInt("III"));
     ASSERT_EQ(4, solution.romanToInt("IV"));
