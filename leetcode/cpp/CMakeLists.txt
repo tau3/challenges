@@ -11,7 +11,7 @@ add_subdirectory(googletest)
 
 project(${name})
 
-add_executable(${name} merge-two-binary-trees.cpp)
+add_executable(${name} maximum-difference-between-node-and-ancestor.cpp)
 target_link_libraries(${name} PUBLIC
     gtest_main
 )
