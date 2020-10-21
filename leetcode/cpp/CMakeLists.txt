@@ -11,7 +11,7 @@ add_subdirectory(googletest)
 
 project(${name})
 
-add_executable(${name} maximum-difference-between-node-and-ancestor.cpp)
+add_executable(${name} flipping-an-image.cpp)
 target_link_libraries(${name} PUBLIC
     gtest_main
 )
