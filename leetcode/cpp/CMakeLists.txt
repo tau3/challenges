@@ -11,7 +11,7 @@ add_subdirectory(googletest)
 
 project(${name})
 
-add_executable(${name} flipping-an-image.cpp)
+add_executable(${name} rotting-oranges.cpp)
 target_link_libraries(${name} PUBLIC
     gtest_main
 )
