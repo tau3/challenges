@@ -1,22 +1,20 @@
-cmake_minimum_required(VERSION 3.13.4)
+cmake_minimum_required(VERSION 3.18.4)
 
-set(CMAKE_CXX_FLAGS "-pedantic -Wall -Wextra")
-
-set(name leetcode-cpp)
-
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS "-g -pedantic -Wall -Wextra")
 set(CMAKE_CXX_STANDARD 11)
-enable_testing()
-add_subdirectory(googletest)
 
-project(${name})
-
-add_executable(${name} rotting-oranges.cpp)
-target_link_libraries(${name} PUBLIC
-    gtest_main
+project (leetcode)
+file(GLOB leetcode-src
+    # "*.h"
+    # "*.cpp"
+    "largest-odd-number-in-string.cpp"
 )
 
-add_test(
-    NAME ${name}
-    COMMAND ${name}
-)
+add_executable(${PROJECT_NAME} ${leetcode_src})
+
+# unit tests
+find_package(Catch2 CONFIG REQUIRED)
+add_executable(unit_tests "largest-odd-number-in-string.cpp") 
+target_link_libraries(unit_tests PRIVATE Catch2::Catch2)
+include(Catch)
+catch_discover_tests(unit_tests)
