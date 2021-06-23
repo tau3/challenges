@@ -7,14 +7,14 @@ project (leetcode)
 file(GLOB leetcode_src
     # "*.h"
     # "*.cpp"
-    "count-items-matching-a-rule.cpp"
+    "determine-if-two-strings-are-close.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${leetcode_src})
 
 # unit tests
 find_package(Catch2 CONFIG REQUIRED)
-add_executable(unit_tests "count-items-matching-a-rule.cpp")
+add_executable(unit_tests "determine-if-two-strings-are-close.cpp")
 target_link_libraries(unit_tests PRIVATE Catch2::Catch2)
 include(Catch)
 catch_discover_tests(unit_tests)
