@@ -4,17 +4,17 @@ set(CMAKE_CXX_FLAGS "-g -pedantic -Wall -Wextra")
 set(CMAKE_CXX_STANDARD 11)
 
 project (leetcode)
-file(GLOB leetcode-src
+file(GLOB leetcode_src
     # "*.h"
     # "*.cpp"
-    "largest-odd-number-in-string.cpp"
+    "count-items-matching-a-rule.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${leetcode_src})
 
 # unit tests
 find_package(Catch2 CONFIG REQUIRED)
-add_executable(unit_tests "largest-odd-number-in-string.cpp") 
+add_executable(unit_tests "count-items-matching-a-rule.cpp")
 target_link_libraries(unit_tests PRIVATE Catch2::Catch2)
 include(Catch)
 catch_discover_tests(unit_tests)
