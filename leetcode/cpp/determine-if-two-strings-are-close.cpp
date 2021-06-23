@@ -33,14 +33,24 @@ class Solution {
             return false;
         }
 
-        std::sort(word1.begin(), word1.end());
-        std::sort(word2.begin(), word2.end());
-
-        if (word1 == word2) {
-            return true;
+        vector<int> frequencies1(26);
+        for (size_t i = 0; i < word1.size(); ++i) {
+            const char letter = word1[i];
+            frequencies1[letter - 'a']++;
         }
 
-        return frequencies(word1) == frequencies(word2);
+        vector<int> frequencies2(26);
+        for (size_t i = 0; i < word2.size(); ++i) {
+            const char letter = word2[i];
+            if (frequencies1[letter - 'a'] == 0) {
+                return false;
+            }
+            frequencies2[letter - 'a']++;
+        }
+
+        std::sort(frequencies1.begin(), frequencies1.end());
+        std::sort(frequencies2.begin(), frequencies2.end());
+        return frequencies1 == frequencies2;
     }
 };
 
@@ -62,4 +72,9 @@ TEST_CASE("cabbba - abbccc - true", "[P1657]") {
 TEST_CASE("cabbba - aabbss - false", "[P1657]") {
     Solution solution;
     REQUIRE_FALSE(solution.closeStrings("cabbba", "aabbss"));
+}
+
+TEST_CASE("uau - ssx - false", "[P1657]") {
+    Solution solution;
+    REQUIRE_FALSE(solution.closeStrings("uau", "ssx"));
 }
