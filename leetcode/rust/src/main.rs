@@ -1,3 +1,3 @@
-mod find_n_unique_integers_sum_up_to_zero;
+mod pascal_triangle;
 
 fn main() {}
