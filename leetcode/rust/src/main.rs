@@ -1,3 +1,3 @@
-mod pascal_triangle;
+mod valid_square;
 
 fn main() {}
