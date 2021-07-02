@@ -1,3 +1,3 @@
-mod valid_square;
+mod combination_sum;
 
 fn main() {}
