@@ -9,6 +9,19 @@ class MostCommonWordTest {
 
     @Test
     void testCase1() {
-        assertEquals("ball", SOLUTION.mostCommonWord("Bob hit a ball, the hit BALL flew far after it was hit.", new String[]{"hit"}));
+        String actual = SOLUTION.mostCommonWord("Bob hit a ball, the hit BALL flew far after it was hit.", new String[]{"hit"});
+        assertEquals("ball", actual);
+    }
+
+    @Test
+    void testCase2() {
+        String actual = SOLUTION.mostCommonWord("a.", new String[]{});
+        assertEquals("a", actual);
+    }
+
+    @Test
+    void testCase3() {
+        String actual = SOLUTION.mostCommonWord("Bob. hIt, baLl", new String[]{"bob", "hit"});
+        assertEquals("ball", actual);
     }
 }
