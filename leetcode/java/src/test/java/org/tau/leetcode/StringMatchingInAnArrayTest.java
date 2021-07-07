@@ -18,7 +18,7 @@ public class StringMatchingInAnArrayTest {
 
     @Test
     void testCase2() {
-        assertEquals(List.of("et", "code"),
+        assertEquals(List.of("code", "et"),
                 SOLUTION.stringMatching(new String[]{"leetcode", "et", "code"}));
     }
 
@@ -30,8 +30,7 @@ public class StringMatchingInAnArrayTest {
 
     @Test
     void testCase4() {
-        assertEquals(List.of("leetcode", "od", "am"),
+        assertEquals(List.of("od", "leetcode", "am"),
                 SOLUTION.stringMatching(new String[]{"leetcoder", "leetcode", "od", "hamlet", "am"}));
     }
-
 }
