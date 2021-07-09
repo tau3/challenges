@@ -19,16 +19,19 @@ public class Task1 {
 
         Map<Integer, Long> vertexToAppearances = vertexAppearances.stream()
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        System.out.println("vertex to app " + vertexToAppearances);
 
         List<Integer> sortedVertexes = vertexAppearances.stream()
                 .distinct()
-                .sorted(Comparator.comparing(vertexToAppearances::get))
+                .sorted(Comparator.comparing(vertexToAppearances::get).reversed())
                 .toList();
-
+        System.out.println("sorted " + sortedVertexes);
 
         Map<Integer, Integer> vertexToValue = new HashMap<>();
-        for (int i = 1; i <= N; i++) {
-            vertexToValue.put(sortedVertexes.get(i - 1), i);
+        int currentWeight = N;
+        for (int vertex : sortedVertexes) {
+            vertexToValue.put(vertex, currentWeight);
+            currentWeight--;
         }
 
         int result = 0;
@@ -44,5 +47,4 @@ public class Task1 {
     private static List<Integer> arrayToList(int[] array) {
         return Arrays.stream(array).boxed().toList();
     }
-
 }
