@@ -1,21 +1,34 @@
 package com.sprout.test;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class Task3 {
     public int solution(int[] A) {
-        int result = -1;
-        Map<Integer, Integer> cache = new HashMap<>();
+        int maxSum = -1;
+        Map<Integer, Queue<Integer>> cache = new HashMap<>();
         for (int val : A) {
             int sum = sumOfNumbers(val);
             if (cache.containsKey(sum)) {
-                result = Math.max(result, sum);
+                Queue<Integer> candidates = cache.get(sum);
+                candidates.add(val);
+                maxSum = Math.max(maxSum, sum);
             } else {
-                cache.put(sum, val);
+                Queue<Integer> candidates = new PriorityQueue<>(Comparator.reverseOrder());
+                candidates.add(val);
+                cache.put(sum, candidates);
             }
         }
-        return result;
+
+        return cache.values()
+                .stream()
+                .filter(queue -> queue.size() > 1)
+                .map(queue -> queue.remove() + queue.remove())
+                .max(Comparator.naturalOrder())
+                .orElse(-1);
     }
 
     private static int sumOfNumbers(int a) {
@@ -25,7 +38,6 @@ public class Task3 {
             result += digit;
             a /= 10;
         }
-        System.out.println(a + " " + result);
         return result;
     }
 }
