@@ -6,26 +6,19 @@
 
 using std::vector;
 
-int division(int a, int b) {
-    int result = 0;
-    while (a > 0) {
-        a -= b;
-        ++result;
-    }
-    return result;
-}
-
 class Solution {
   public:
     vector<int> productExceptSelf(vector<int> &nums) {
-        int product = nums[0];
-        for (size_t i = 1; i < nums.size(); ++i) {
-            product *= nums[i];
+        const size_t size = nums.size();
+        vector<int> result(size, 1);
+        for (size_t i = 1; i < size; ++i) {
+            result[i] = result[i - 1] * nums[i - 1];
         }
-        vector<int> result;
-        for (int num : nums) {
-            int val = division(product, num);
-            result.push_back(val);
+
+        int post_product = 1;
+        for (int i = size - 2; i >= 0; --i) {
+            post_product *= nums[i + 1];
+            result[i] *= post_product;
         }
         return result;
     }
