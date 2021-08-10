@@ -23,8 +23,11 @@ class Solution {
         }
 
         int backward = 0;
-        int i = start;
-        while (i != destination) {
+        int i = start - 1;
+        if (i < 0) {
+            i = distance.size() - 1;
+        }
+        while (i != destination - 1) {
             backward += distance[i];
             --i;
             if (i < 0) {
