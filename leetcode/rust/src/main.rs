@@ -1,3 +1,3 @@
-pub mod find_the_pivot_integer;
+pub mod string_odd_counts;
 
 fn main() {}
