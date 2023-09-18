@@ -1,3 +1,3 @@
-pub mod string_odd_counts;
+pub mod longest_ideal_subsequence;
 
 fn main() {}
