@@ -28,24 +28,28 @@ impl MovieRentingSystem {
     }
 
     pub fn search(&self, movie: i32) -> Vec<i32> {
-        let data = self.present.get(&movie).unwrap();
-        data.iter().take(5).map(|(_, shop)| *shop).collect()
+        match self.present.get(&movie) {
+            Some(data) => data.iter().take(5).map(|(_, shop)| *shop).collect(),
+            None => vec![],
+        }
     }
 
     pub fn rent(&mut self, shop: i32, movie: i32) {
         let price = *self.prices.get(&(shop, movie)).unwrap();
         self.absent.insert((price, shop, movie));
 
-        let data = self.present.get_mut(&movie).unwrap();
-        data.remove(&(price, shop));
+        if let Some(data) = self.present.get_mut(&movie) {
+            data.remove(&(price, shop));
+        }
     }
 
     pub fn drop(&mut self, shop: i32, movie: i32) {
         let price = *self.prices.get(&(shop, movie)).unwrap();
         self.absent.remove(&(price, shop, movie));
 
-        let data = self.present.get_mut(&movie).unwrap();
-        data.insert((price, shop));
+        if let Some(data) = self.present.get_mut(&movie) {
+            data.insert((price, shop));
+        }
     }
 
     pub fn report(&self) -> Vec<Vec<i32>> {
