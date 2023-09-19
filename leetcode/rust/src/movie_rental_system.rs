@@ -1,21 +1,29 @@
-use std::{cmp::Ordering, collections::HashMap};
+use std::{
+    cmp::Ordering::{self, Equal, Greater, Less},
+    collections::HashMap,
+};
 
 type MovieId = i32;
 type ShopId = i32;
 type Price = i32;
 
 struct MovieRentingSystem {
-    state: Vec<Vec<i32>>,
     shops: HashMap<ShopId, HashMap<MovieId, (i32, bool)>>,
-    s: Vec<(i32, i32)>,
 }
 
 impl MovieRentingSystem {
     fn new(n: i32, entries: Vec<Vec<i32>>) -> Self {
-        Self {
-            state: entries,
-            shops: n,
+        let mut shops = HashMap::new();
+        for entry in entries {
+            let shop_id = entry[0];
+            let movie_id = entry[1];
+            let price = entry[2];
+            shops
+                .entry(shop_id)
+                .or_insert_with(|| HashMap::new())
+                .insert(movie_id, (price, true));
         }
+        Self { shops }
     }
 
     fn search(&self, movie: i32) -> Vec<i32> {
@@ -28,11 +36,11 @@ impl MovieRentingSystem {
             }
         }
         result.sort_by(|a, b| match a.1.cmp(b.1) {
-            std::cmp::Ordering::Less => std::cmp::Ordering::Less,
-            std::cmp::Ordering::Greater => std::cmp::Ordering::Greater,
-            std::cmp::Ordering::Equal => a.0.cmp(b.0),
+            Less => Less,
+            Greater => Greater,
+            Equal => a.0.cmp(&b.0),
         });
-        result.iter().take(5).map(|(a, b)| a).collect()
+        result.iter().take(5).map(|(a, b)| *a).collect()
     }
 
     fn rent(&self, shop: i32, movie: i32) {
@@ -60,19 +68,23 @@ impl MovieRentingSystem {
                 if stats.1 == false {
                     continue;
                 }
-                result.push(vec![shop_id, movie_id, stats.0]);
+                result.push((shop_id, movie_id, stats.0));
             }
         }
 
-        result.sort_by(|a, b| match a.2.cmp(b.2) {
-            Ordering::Less => Ordering::Less,
-            Ordering::Greater => Ordering::Greater,
-            Ordering::Equal => match a.0.cmp(b.0) {
+        result.sort_by(|a, b| match a.2.cmp(&b.2) {
+            Less => Less,
+            Greater => Greater,
+            Equal => match a.0.cmp(&b.0) {
                 Less => Less,
-                Ordering::Greater => Ordering::Greater,
-                Ordering::Equal => a.1.cmp(b.1),
+                Greater => Greater,
+                Equal => a.1.cmp(&b.1),
             },
         });
-        result.iter().take(5).map(|(a, b, c)| b).collect()
+        result
+            .iter()
+            .take(5)
+            .map(|(a, b, c)| vec![*a, *b])
+            .collect()
     }
 }
