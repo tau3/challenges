@@ -1,3 +1,3 @@
-pub mod longest_ideal_subsequence;
+pub mod movie_rental_system;
 
 fn main() {}
