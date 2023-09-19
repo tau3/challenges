@@ -1,5 +1,5 @@
 use std::{
-    cmp::Ordering::{self, Equal, Greater, Less},
+    cmp::Ordering::{Equal, Greater, Less},
     collections::HashMap,
 };
 
@@ -28,10 +28,10 @@ impl MovieRentingSystem {
 
     fn search(&self, movie: i32) -> Vec<i32> {
         let mut result = vec![];
-        for (k, v) in self.shops {
-            if let Some((price, is_present)) = v.get(&movie) {
+        for (shop_id, shop_data) in self.shops.iter() {
+            if let Some((price, is_present)) = shop_data.get(&movie) {
                 if *is_present {
-                    result.push((k, price));
+                    result.push((shop_id, price));
                 }
             }
         }
@@ -40,11 +40,11 @@ impl MovieRentingSystem {
             Greater => Greater,
             Equal => a.0.cmp(&b.0),
         });
-        result.iter().take(5).map(|(a, b)| *a).collect()
+        result.iter().take(5).map(|(shop_id, _)| **shop_id).collect()
     }
 
-    fn rent(&self, shop: i32, movie: i32) {
-        let mut shop_data = self.shops.get(&shop).unwrap();
+    fn rent(&mut self, shop: i32, movie: i32) {
+        let mut shop_data = &mut self.shops.get(&shop).unwrap();
         if let Some(x) = shop_data.get_mut(&movie) {
             *x = (x.0, false);
         } else {
@@ -52,8 +52,8 @@ impl MovieRentingSystem {
         }
     }
 
-    fn drop(&self, shop: i32, movie: i32) {
-        let mut shop_data = self.shops.get(&shop).unwrap();
+    fn drop(&mut self, shop: i32, movie: i32) {
+        let shop_data = &mut self.shops.get(&shop).unwrap();
         if let Some(x) = shop_data.get_mut(&movie) {
             *x = (x.0, true);
         } else {
@@ -63,7 +63,7 @@ impl MovieRentingSystem {
 
     fn report(&self) -> Vec<Vec<i32>> {
         let mut result = vec![];
-        for (shop_id, movie_to_stats) in self.shops {
+        for (shop_id, movie_to_stats) in self.shops.iter() {
             for (movie_id, stats) in movie_to_stats {
                 if stats.1 == false {
                     continue;
@@ -84,7 +84,7 @@ impl MovieRentingSystem {
         result
             .iter()
             .take(5)
-            .map(|(a, b, c)| vec![*a, *b])
+            .map(|(shop_id, movie_id, _)| vec![**shop_id, **movie_id])
             .collect()
     }
 }
