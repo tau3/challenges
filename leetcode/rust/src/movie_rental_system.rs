@@ -3,16 +3,12 @@ use std::{
     collections::HashMap,
 };
 
-type MovieId = i32;
-type ShopId = i32;
-type Price = i32;
-
-struct MovieRentingSystem {
-    shops: HashMap<ShopId, HashMap<MovieId, (i32, bool)>>,
+pub struct MovieRentingSystem {
+    shops: HashMap<i32, HashMap<i32, (i32, bool)>>,
 }
 
 impl MovieRentingSystem {
-    fn new(n: i32, entries: Vec<Vec<i32>>) -> Self {
+    pub fn new(_: i32, entries: Vec<Vec<i32>>) -> Self {
         let mut shops = HashMap::new();
         for entry in entries {
             let shop_id = entry[0];
@@ -20,13 +16,13 @@ impl MovieRentingSystem {
             let price = entry[2];
             shops
                 .entry(shop_id)
-                .or_insert_with(|| HashMap::new())
+                .or_insert_with(HashMap::new)
                 .insert(movie_id, (price, true));
         }
         Self { shops }
     }
 
-    fn search(&self, movie: i32) -> Vec<i32> {
+    pub fn search(&self, movie: i32) -> Vec<i32> {
         let mut result = vec![];
         for (shop_id, shop_data) in self.shops.iter() {
             if let Some((price, is_present)) = shop_data.get(&movie) {
@@ -38,13 +34,13 @@ impl MovieRentingSystem {
         result.sort_by(|a, b| match a.1.cmp(b.1) {
             Less => Less,
             Greater => Greater,
-            Equal => a.0.cmp(&b.0),
+            Equal => a.0.cmp(b.0),
         });
         result.iter().take(5).map(|(shop_id, _)| **shop_id).collect()
     }
 
-    fn rent(&mut self, shop: i32, movie: i32) {
-        let mut shop_data = &mut self.shops.get(&shop).unwrap();
+    pub fn rent(&mut self, shop: i32, movie: i32) {
+        let shop_data = &mut self.shops.get_mut(&shop).unwrap();
         if let Some(x) = shop_data.get_mut(&movie) {
             *x = (x.0, false);
         } else {
@@ -52,8 +48,8 @@ impl MovieRentingSystem {
         }
     }
 
-    fn drop(&mut self, shop: i32, movie: i32) {
-        let shop_data = &mut self.shops.get(&shop).unwrap();
+    pub fn drop(&mut self, shop: i32, movie: i32) {
+        let shop_data = &mut self.shops.get_mut(&shop).unwrap();
         if let Some(x) = shop_data.get_mut(&movie) {
             *x = (x.0, true);
         } else {
@@ -61,11 +57,11 @@ impl MovieRentingSystem {
         }
     }
 
-    fn report(&self) -> Vec<Vec<i32>> {
+    pub fn report(&self) -> Vec<Vec<i32>> {
         let mut result = vec![];
         for (shop_id, movie_to_stats) in self.shops.iter() {
             for (movie_id, stats) in movie_to_stats {
-                if stats.1 == false {
+                if !stats.1 {
                     continue;
                 }
                 result.push((shop_id, movie_id, stats.0));
@@ -75,10 +71,10 @@ impl MovieRentingSystem {
         result.sort_by(|a, b| match a.2.cmp(&b.2) {
             Less => Less,
             Greater => Greater,
-            Equal => match a.0.cmp(&b.0) {
+            Equal => match a.0.cmp(b.0) {
                 Less => Less,
                 Greater => Greater,
-                Equal => a.1.cmp(&b.1),
+                Equal => a.1.cmp(b.1),
             },
         });
         result
