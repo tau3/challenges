@@ -1,3 +1,3 @@
-pub mod movie_rental_system;
+pub mod max_length_concat_unique;
 
 fn main() {}
