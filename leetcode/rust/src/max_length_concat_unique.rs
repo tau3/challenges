@@ -2,16 +2,25 @@ pub struct Solution {}
 
 impl Solution {
     pub fn max_length(arr: Vec<String>) -> i32 {
-        let arr = arr.iter().map(|word| Self::str_to_mask(word)).collect();
+        let arr = arr
+            .iter()
+            .map(|word| Self::str_to_mask(word))
+            .filter(|mask| mask.is_some())
+            .map(|mask| mask.unwrap())
+            .collect();
         Self::solve(&arr, 0, 0) as i32
     }
 
-    fn str_to_mask(input: &str) -> u32 {
+    fn str_to_mask(input: &str) -> Option<u32> {
         let mut result = 0;
         for c in input.chars() {
+            let mask = 1 << (c as usize - 'a' as usize);
+            if mask & result != 0 {
+                return None;
+            }
             result |= 1 << (c as usize - 'a' as usize);
         }
-        result
+        Some(result)
     }
 
     fn solve(arr: &Vec<u32>, start: usize, memo: u32) -> u32 {
@@ -32,31 +41,31 @@ impl Solution {
 mod test {
     use super::*;
 
+    fn to_strings(input: &[&str])->Vec<String>{
+        input.iter().map(|word| word.to_string()).collect()
+    }
+
     #[test]
     fn test() {
         let arr = ["un", "iq", "ue"];
-        let arr = arr.iter().map(|word| word.to_string()).collect();
-        assert_eq!(4, Solution::max_length(arr));
+        assert_eq!(4, Solution::max_length(to_strings(&arr)));
     }
 
     #[test]
     fn test2() {
         let arr = ["cha", "r", "act", "ers"];
-        let arr = arr.iter().map(|word| word.to_string()).collect();
-        assert_eq!(6, Solution::max_length(arr));
+        assert_eq!(6, Solution::max_length(to_strings(&arr)));
     }
 
     #[test]
     fn test3() {
         let arr = ["abcdefghijklmnopqrstuvwxyz"];
-        let arr = arr.iter().map(|word| word.to_string()).collect();
-        assert_eq!(26, Solution::max_length(arr));
+        assert_eq!(26, Solution::max_length(to_strings(&arr)));
     }
 
     #[test]
-    fn test4() {
+    fn test_duplicate_chars_in_input() {
         let arr = ["aa", "bb"];
-        let arr = arr.iter().map(|word| word.to_string()).collect();
-        assert_eq!(0, Solution::max_length(arr));
+        assert_eq!(0, Solution::max_length(to_strings(&arr)));
     }
 }
