@@ -26,7 +26,13 @@ mod tests {
 
     #[test]
     fn test_5() {
-        let expected = vec![vec![1], vec![1, 1], vec![1, 2, 1], vec![1, 3, 3, 1], vec![1, 4, 6, 4, 1]];
+        let expected = vec![
+            vec![1],
+            vec![1, 1],
+            vec![1, 2, 1],
+            vec![1, 3, 3, 1],
+            vec![1, 4, 6, 4, 1],
+        ];
         assert_eq!(expected, Solution::generate(5));
     }
 

@@ -4,9 +4,7 @@ impl Solution {
     pub fn max_length(arr: Vec<String>) -> i32 {
         let arr = arr
             .iter()
-            .map(|word| Self::str_to_mask(word))
-            .filter(|mask| mask.is_some())
-            .map(|mask| mask.unwrap())
+            .filter_map(|word| Self::str_to_mask(word))
             .collect();
         Self::solve(&arr, 0, 0) as i32
     }
@@ -18,7 +16,7 @@ impl Solution {
             if mask & result != 0 {
                 return None;
             }
-            result |= 1 << (c as usize - 'a' as usize);
+            result |= mask;
         }
         Some(result)
     }
@@ -41,7 +39,7 @@ impl Solution {
 mod test {
     use super::*;
 
-    fn to_strings(input: &[&str])->Vec<String>{
+    fn to_strings(input: &[&str]) -> Vec<String> {
         input.iter().map(|word| word.to_string()).collect()
     }
 

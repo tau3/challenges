@@ -1,3 +1,3 @@
-pub mod max_length_concat_unique;
+pub mod longest_alternating_subarray;
 
 fn main() {}
