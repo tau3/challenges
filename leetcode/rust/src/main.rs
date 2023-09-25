@@ -1,3 +1,3 @@
-pub mod longest_alternating_subarray;
+pub mod slowest_key;
 
 fn main() {}
