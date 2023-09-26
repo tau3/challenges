@@ -1,3 +1,3 @@
-pub mod slowest_key;
+pub mod largest_palindromic_number;
 
 fn main() {}
