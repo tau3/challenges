@@ -1,39 +1,36 @@
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 pub struct Solution {}
 
 impl Solution {
     pub fn largest_palindromic(num: String) -> String {
-        let mut counter = BTreeMap::new();
+        let mut counters = BTreeMap::new();
         for i in num.chars() {
-            let value = counter.entry(i).or_insert_with(|| 0);
+            let value = counters.entry(i).or_insert_with(|| 0);
             *value += 1;
         }
 
-        let mut result = String::from("");
-        for (k, v) in counter.iter() {
-            let c = v / 2;
-            for i in 0..c {
-                result.push(*k);
+        let mut right_half = String::from("");
+        for (digit, count) in counters.iter_mut() {
+            let half = *count / 2;
+            for _ in 0..half {
+                right_half.push(*digit);
             }
-            counter.insert(*k, v - c * 2);
+            *count -= half * 2;
         }
-        let maybe_middle = counter
+
+        let maybe_middle = counters
             .iter()
-            .filter(|(k, v)| **v != 0)
-            .map(|(k, v)| k)
+            .filter(|(_, count)| **count != 0)
+            .map(|(digit, _)| digit)
             .max();
-        if let Some(x) = maybe_middle {
-            let mut xxx: String = result.chars().rev().collect();
-            // let xxx: String = result.chars().rev().collect::<Vec<char>>().into();
-            xxx.push(*x);
-            xxx.push_str(&result);
-            return xxx;
-        } else {
-            let mut xxx: String = result.chars().rev().collect();
-            xxx.push_str(&result);
-            return xxx;
+
+        let mut result: String = right_half.chars().rev().collect();
+        if let Some(middle) = maybe_middle {
+            result.push(*middle);
         }
+        result.push_str(&right_half);
+        result
     }
 }
 
@@ -46,6 +43,11 @@ mod test {
         assert_eq!(
             "7449447".to_string(),
             Solution::largest_palindromic("444947137".into())
+        );
+
+        assert_eq!(
+            "9".to_string(),
+            Solution::largest_palindromic("00009".into())
         );
     }
 }
