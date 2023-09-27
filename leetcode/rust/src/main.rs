@@ -1,3 +1,3 @@
-pub mod largest_palindromic_number;
+pub mod random_pick_index;
 
 fn main() {}
