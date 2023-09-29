@@ -1,3 +1,3 @@
-pub mod replace_right_elements;
+pub mod min_convert_time;
 
 fn main() {}
