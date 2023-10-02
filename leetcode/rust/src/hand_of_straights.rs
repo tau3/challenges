@@ -8,16 +8,14 @@ impl Solution {
 
         hand.sort();
         let group_size = group_size as usize;
-        let mut groups: Vec<Vec<i32>> = vec![vec![]; group_size];
+        let mut groups: Vec<Vec<i32>> = vec![vec![]; hand.len() / group_size];
 
-        // println!("groups: {:?}", groups);
         for card in hand {
             let mut is_pushed = false;
             for group in groups.iter_mut() {
                 if group.is_empty() {
                     group.push(card);
                     is_pushed = true;
-                    // println!("push {} to empty", card);
                     break;
                 }
 
@@ -30,7 +28,6 @@ impl Solution {
             if !is_pushed {
                 return false;
             }
-            println!("groups: {:?}", groups);
         }
 
         groups.iter().all(|group| group.len() == group_size)
