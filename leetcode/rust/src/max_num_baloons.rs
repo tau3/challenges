@@ -1,25 +1,21 @@
-use std::collections::HashMap;
-
 pub struct Solution {}
 
 impl Solution {
     pub fn max_number_of_balloons(text: String) -> i32 {
-	// TODO array
-        let mut counts = HashMap::new();
+        let mut counts = [0; 26];
 
         for c in text.chars() {
-            let entry = counts.entry(c).or_insert(0);
-            *entry += 1;
+            counts[c as usize - 'a' as usize] += 1;
         }
 
-        let result: Vec<u16> = vec![
-            *counts.get(&'b').unwrap_or(&0),
-            *counts.get(&'a').unwrap_or(&0),
-            *counts.get(&'l').unwrap_or(&0),
-            *counts.get(&'o').unwrap_or(&0),
-            *counts.get(&'n').unwrap_or(&0),
+        let result = [
+            counts[1],      // b
+            counts[0],      // a
+            counts[11] / 2, // l
+            counts[14] / 2, // o
+            counts[13],     // n
         ];
-        *result.iter().min().unwrap() as i32
+        *result.iter().min().unwrap()
     }
 }
 
@@ -38,7 +34,7 @@ mod test {
     }
 
     #[test]
-    fn test_balon(){
+    fn test_balon() {
         assert_eq!(0, Solution::max_number_of_balloons("balon".to_string()));
     }
 }
