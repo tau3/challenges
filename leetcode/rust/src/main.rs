@@ -1,3 +1,3 @@
-pub mod hand_of_straights;
+pub mod max_num_baloons;
 
 fn main() {}
