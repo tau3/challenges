@@ -1,3 +1,3 @@
-pub mod array_with_stack;
+pub mod kth_smallest_instructions;
 
 fn main() {}
