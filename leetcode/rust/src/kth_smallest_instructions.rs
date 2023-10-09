@@ -1,57 +1,43 @@
-use std::{cell::RefCell, collections::HashMap, rc::Rc};
-
 pub struct Solution {}
-
-type Memo = Rc<RefCell<HashMap<(i32, i32), Vec<String>>>>;
 
 impl Solution {
     pub fn kth_smallest_path(destination: Vec<i32>, k: i32) -> String {
-        let memo = Rc::new(RefCell::new(HashMap::new()));
-        let mut all_paths = Self::solve((destination[0], destination[1]), Rc::clone(&memo));
-        all_paths.sort();
-        all_paths[k as usize - 1].clone()
-    }
-
-    fn solve((row, column): (i32, i32), memo: Memo) -> Vec<String> {
-        if row < 0 || column < 0 {
-            return vec![];
+        let (row, column) = (destination[0] as usize, destination[1] as usize);
+        let mut memo = vec![vec![1_u16; column + 1]; row + 1];
+        for r in (0..=row).rev() {
+            for c in (0..=column).rev() {
+                if r == row && c == column {
+                    continue;
+                } else if r == row {
+                    memo[r][c] = memo[r][c + 1]
+                } else if c == column {
+                    memo[r][c] = memo[r + 1][c];
+                } else {
+                    memo[r][c] = memo[r + 1][c] + memo[r][c + 1];
+                }
+            }
         }
 
-        if row == 0 && column == 0 {
-            return vec![];
-        }
-        if row == 0 && column == 1 {
-            return vec!["H".to_string()];
-        }
-        if row == 1 && column == 0 {
-            return vec!["V".to_string()];
-        }
-
-        let top = (row - 1, column);
-        if !memo.borrow().contains_key(&top) {
-            let paths = Self::solve(top, Rc::clone(&memo));
-            memo.borrow_mut().insert(top, paths);
-        }
-        let left = (row, column - 1);
-        if !memo.borrow().contains_key(&left) {
-            let paths = Self::solve(left, Rc::clone(&memo));
-            memo.borrow_mut().insert(left, paths);
+        let mut r = 0;
+        let mut c = 0;
+        let mut result = String::new();
+        let mut k = k as u16;
+        while r < row && c < column {
+            if k <= memo[r][c + 1] {
+                c += 1;
+                result.push('H');
+            } else {
+                k -= memo[r][c + 1];
+                r += 1;
+                result.push('V');
+            }
         }
 
-        let memo = memo.borrow();
-        let from_top = memo.get(&top).unwrap();
-        let from_left = memo.get(&left).unwrap();
-
-        let mut result = Vec::with_capacity(from_left.len() + from_top.len());
-        for path in from_left.iter() {
-            let mut path = path.clone();
-            path.push('H');
-            result.push(path);
+        for _ in 0..row - r {
+            result.push('V');
         }
-        for path in from_top.iter() {
-            let mut path = path.clone();
-            path.push('V');
-            result.push(path);
+        for _ in 0..column - c {
+            result.push('H');
         }
 
         result
