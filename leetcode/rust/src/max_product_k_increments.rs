@@ -10,14 +10,14 @@ impl Solution {
             heap.push(smallest - 1);
         }
 
-        let modulo = 10_i32.pow(9) + 7;
-        let mut result = 1;
+        let modulo = 10_i64.pow(9) + 7;
+        let mut result = 1_i64;
         for num in heap {
-            result *= num;
+            result *= num as i64;
             result %= modulo;
         }
 
-        (result % modulo).abs()
+        (result % modulo).abs() as i32
     }
 }
 
@@ -29,6 +29,13 @@ mod test {
     fn test() {
         assert_eq!(20, Solution::maximum_product(vec![0, 4], 5));
         assert_eq!(216, Solution::maximum_product(vec![6, 3, 3, 2], 2));
-        assert_eq!(180820950 , Solution::maximum_product(vec![24,5,64,53,26,38], 2));
+    }
+
+    #[test]
+    fn test_large_result() {
+        assert_eq!(
+            180820950,
+            Solution::maximum_product(vec![24, 5, 64, 53, 26, 38], 54)
+        );
     }
 }
