@@ -1,3 +1,3 @@
-pub mod kth_smallest_instructions;
+pub mod max_product_k_increments;
 
 fn main() {}
