@@ -4,7 +4,7 @@ pub struct Solution {}
 
 impl Solution {
     pub fn invalid_transactions(transactions: Vec<String>) -> Vec<String> {
-        let mut result: HashSet<String> = HashSet::new();
+        let mut result = HashSet::new();
         for i in 0..transactions.len() {
             let current = &transactions[i];
             let mut current_tokens = current.split(',');
@@ -12,7 +12,7 @@ impl Solution {
             let current_time: i16 = current_tokens.next().unwrap().parse().unwrap();
             let current_amount: u16 = current_tokens.next().unwrap().parse().unwrap();
             if current_amount > 1000 {
-                result.insert(current.clone());
+                result.insert(i);
             }
             let current_city = current_tokens.next().unwrap();
             for j in i + 1..transactions.len() {
@@ -25,15 +25,19 @@ impl Solution {
                         let _ = other_tokens.next();
                         let other_city = other_tokens.next().unwrap();
                         if other_city != current_city {
-                            result.insert(current.clone());
-                            result.insert(other.clone());
+                            result.insert(i);
+                            result.insert(j);
                         }
                     }
                 }
             }
         }
 
-        result.into_iter().collect()
+        result
+            .into_iter()
+            .map(|i| &transactions[i])
+            .cloned()
+            .collect()
     }
 }
 
