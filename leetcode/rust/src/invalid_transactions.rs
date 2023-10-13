@@ -4,31 +4,24 @@ pub struct Solution {}
 
 impl Solution {
     pub fn invalid_transactions(transactions: Vec<String>) -> Vec<String> {
+        let txns: Vec<_> = transactions
+            .iter()
+            .map(|line| Solution::parse_txn(line))
+            .collect();
         let mut result = HashSet::new();
-        for i in 0..transactions.len() {
-            let current = &transactions[i];
-            let mut current_tokens = current.split(',');
-            let current_name = current_tokens.next().unwrap();
-            let current_time: i16 = current_tokens.next().unwrap().parse().unwrap();
-            let current_amount: u16 = current_tokens.next().unwrap().parse().unwrap();
+        for i in 0..txns.len() {
+            let (current_name, current_time, current_amount, current_city) = txns[i];
             if current_amount > 1000 {
                 result.insert(i);
             }
-            let current_city = current_tokens.next().unwrap();
-            for j in i + 1..transactions.len() {
-                let other = &transactions[j];
-                let mut other_tokens = other.split(',');
-                let other_name = other_tokens.next().unwrap();
-                if other_name == current_name {
-                    let other_time: i16 = other_tokens.next().unwrap().parse().unwrap();
-                    if (other_time - current_time).abs() <= 60 {
-                        let _ = other_tokens.next();
-                        let other_city = other_tokens.next().unwrap();
-                        if other_city != current_city {
-                            result.insert(i);
-                            result.insert(j);
-                        }
-                    }
+            for (j, other) in txns.iter().enumerate().skip(i + 1) {
+                let (other_name, other_time, _, other_city) = other;
+                if other_name == &current_name
+                    && (other_time - current_time).abs() <= 60
+                    && (other_city != &current_city)
+                {
+                    result.insert(i);
+                    result.insert(j);
                 }
             }
         }
@@ -38,6 +31,15 @@ impl Solution {
             .map(|i| &transactions[i])
             .cloned()
             .collect()
+    }
+
+    fn parse_txn(line: &str) -> (&str, i16, u16, &str) {
+        let mut tokens = line.split(',');
+        let name = tokens.next().unwrap();
+        let time = tokens.next().unwrap().parse().unwrap();
+        let amount = tokens.next().unwrap().parse().unwrap();
+        let city = tokens.next().unwrap();
+        (name, time, amount, city)
     }
 }
 
