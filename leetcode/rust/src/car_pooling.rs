@@ -4,10 +4,10 @@ impl Solution {
     pub fn car_pooling(trips: Vec<Vec<i32>>, capacity: i32) -> bool {
         let mut state = [0; 1000];
         for trip in trips {
-            let (count, from, to) = (trip[0], trip[1] as usize, trip[2] as usize);
-            for i in from..=to {
+            let (count, from, to) = (trip[0] as u16, trip[1] as usize, trip[2] as usize);
+            for i in from..to {
                 state[i] += count;
-                if state[i] > capacity {
+                if state[i] > capacity as u16 {
                     return false;
                 }
             }
