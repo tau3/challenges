@@ -30,6 +30,9 @@ impl DetectSquares {
         if let Some(same_column) = self.cache.get(&x1) {
             for (y2, count) in same_column {
                 let l = (y2 - y1).abs();
+                if l == 0 {
+                    continue;
+                }
 
                 let x_left = x1 - l;
                 if let Some(left) = self.cache.get(&x_left) {
