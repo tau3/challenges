@@ -1,3 +1,3 @@
-pub mod car_pooling;
+pub mod detect_squares;
 
 fn main() {}
